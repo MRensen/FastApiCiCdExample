@@ -21,7 +21,7 @@ def get_car(brand):
     for car in cars:
         if car.brand == brand:
             return car
-    return None
+    return {"error": "Car not found"}
 
 
 @app.get("/")

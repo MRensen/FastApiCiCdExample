@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from FirstFastApi import app  # pas eventueel aan naar je bestandsnaam
+from app import app  # pas eventueel aan naar je bestandsnaam
 
 client = TestClient(app)
 
