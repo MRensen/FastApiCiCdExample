@@ -10,6 +10,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.10
@@ -34,14 +37,7 @@ jobs:
   # -------------------------
   # Docker build & push
   # -------------------------
-  push:
-    needs: build   # wacht op de build-job
-    runs-on: ubuntu-latest
 
-    permissions:
-      packages: write
-      contents: read
-    steps:
       - name: Create lowercase image name
         run: |
             IMAGE_NAME_LOWER=$(echo "${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')
