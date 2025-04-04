@@ -26,7 +26,7 @@ def get_car(brand):
 
 @app.get("/")
 def home():
-    return "Hello Belastingdienst"
+    return "Hello jongens en meisjes"
 
 @app.get("/novi")
 def novi():
