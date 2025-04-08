@@ -112,4 +112,6 @@ jobs:
         env:
           COMMIT_HASH: ${{ github.sha }}
         run: |
-          kubectl set image deployment/website website=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
+          kubectl delete deployment website -n fastapi-test
+          kubectl create deployment website --image=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
+#          kubectl set image deployment/website website=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
