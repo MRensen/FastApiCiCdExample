@@ -112,6 +112,15 @@ jobs:
         env:
           COMMIT_HASH: ${{ github.sha }}
         run: |
+          if kubectl get deployment website -n fastapi-test > /dev/null 2>&1; then
+          echo "Deleting existing deployment..."
           kubectl delete deployment website -n fastapi-test
-          kubectl create deployment website --image=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
+          else
+          echo "Deployment does not exist, skipping delete."
+          fi
+
+          echo "Creating deployment..."
+          kubectl create deployment website \
+          --image=${REGISTRY}/fast-api:${COMMIT_HASH} \
+          -n fastapi-test
 #          kubectl set image deployment/website website=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
