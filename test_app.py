@@ -6,12 +6,12 @@ client = TestClient(app)
 def test_home():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == "Hello jongens en meisjes"
+    assert response.json() == "Hello boys and girl"
 
 def test_novi():
     response = client.get("/novi")
     assert response.status_code == 200
-    assert response.json() == {"message": "Hoi Novi"}
+    assert response.json() == {"message": "Hallo Novi"}
 
 def test_get_cars():
     response = client.get("/cars")
