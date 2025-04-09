@@ -5,8 +5,8 @@ on:
     branches:
       - main
 env:
-#  IMAGE_NAME: ghcr.io/${{ github.repository }}
-  REGISTRY: registry.digitalocean.com/novi-pipelines # PAs dit aan naar je eigen registry. Een registry registreer je op DO, net als een kubernetes cluster
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+#  REGISTRY: registry.digitalocean.com/novi-pipelines # PAs dit aan naar je eigen registry. Een registry registreer je op DO, net als een kubernetes cluster
 
 jobs:
   build:
@@ -58,10 +58,10 @@ jobs:
   # Docker build & push
   # -------------------------
 
-#      - name: Create lowercase image name
-#        run: |
-#            IMAGE_NAME_LOWER=$(echo "${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')
-#            echo "IMAGE_NAME_LOWER=$IMAGE_NAME_LOWER" >> $GITHUB_ENV
+      - name: Create lowercase image name
+        run: |
+            IMAGE_NAME_LOWER=$(echo "${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')
+            echo "IMAGE_NAME_LOWER=$IMAGE_NAME_LOWER" >> $GITHUB_ENV
 
 #      - name: Log in to GitHub Container Registry
 #        uses: docker/login-action@v3
@@ -70,16 +70,18 @@ jobs:
 #          username: ${{ github.actor }}
 #          password: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Build Docker image
-#        run: |
-#          docker build -t $IMAGE_NAME_LOWER:latest .
-
-      # Build Docker Image with Git commit hash as tag for DO
       - name: Build Docker image
         env:
-          COMMIT_HASH: ${{ github.sha }}
+                  COMMIT_HASH: ${{ github.sha }}
         run: |
-          docker build -t ${REGISTRY}/fast-api:${COMMIT_HASH} -t ${REGISTRY}/fast-api:latest . 
+          docker build -t $IMAGE_NAME_LOWER:latest -t $IMAGE_NAME_LOWER:$COMMIT_HASH .
+
+#      # Build Docker Image with Git commit hash as tag for DO
+#      - name: Build Docker image
+#        env:
+#          COMMIT_HASH: ${{ github.sha }}
+#        run: |
+#          docker build -t ${REGISTRY}/fast-api:${COMMIT_HASH} -t ${REGISTRY}/fast-api:latest .
 
 #      - name : Create DO registry
 #        run: doctl registry create <your-registry-name>
@@ -87,13 +89,13 @@ jobs:
 #      - name: Log in to DigitalOcean Container Registry with short-lived credentials
 #        run: doctl registry login --expiry-seconds 1200
 
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push --all-tags ${REGISTRY}/fast-api
+#      - name: Push image to DigitalOcean Container Registry
+#        run: docker push --all-tags ${REGISTRY}/fast-api
 
 
-#      - name: Push Docker image
-#        run: |
-#          docker push $IMAGE_NAME_LOWER:latest
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE_NAME_LOWER:latest
 
       # Deploy to DigitalOcean Kubernetes
       - name: Set up kubectl
@@ -112,15 +114,18 @@ jobs:
         env:
           COMMIT_HASH: ${{ github.sha }}
         run: |
-          if kubectl get deployment website -n fastapi-test > /dev/null 2>&1; then
-          echo "Deleting existing deployment..."
-          kubectl delete deployment website -n fastapi-test
-          else
-          echo "Deployment does not exist, skipping delete."
-          fi
+#          if kubectl get deployment website -n fastapi-test > /dev/null 2>&1; then
+#          echo "Deleting existing deployment..."
+#          kubectl delete deployment website -n fastapi-test
+#          else
+#          echo "Deployment does not exist, skipping delete."
+#          fi
+#
+#          echo "Creating deployment..."
+#          kubectl create deployment website \
+#          --image=${REGISTRY}/fast-api:${COMMIT_HASH} \
+#          -n fastapi-test
+          kubectl set image deployment/website website=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
 
-          echo "Creating deployment..."
-          kubectl create deployment website \
-          --image=${REGISTRY}/fast-api:${COMMIT_HASH} \
-          -n fastapi-test
-#          kubectl set image deployment/website website=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
+#      - name: expose
+#        run: kubectl expose deployment website --type=LoadBalancer --port=80 --target-port=80 --name=website -n fastapi-test
