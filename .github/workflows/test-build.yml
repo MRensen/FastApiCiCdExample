@@ -98,7 +98,7 @@ jobs:
           COMMIT_HASH: ${{ github.sha }}
         run: |
           docker push $IMAGE_NAME_LOWER:latest
-          docker push $IMAGE_NAME_LOWER:$COMMI_HASH
+          docker push $IMAGE_NAME_LOWER:$COMMIT_HASH
 
       # Deploy to DigitalOcean Kubernetes
       - name: Set up kubectl
