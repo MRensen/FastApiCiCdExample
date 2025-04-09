@@ -94,8 +94,11 @@ jobs:
 
 
       - name: Push Docker image
+        env:
+          COMMIT_HASH: ${{ github.sha }}
         run: |
           docker push $IMAGE_NAME_LOWER:latest
+          docker push $IMAGE_NAME_LOWER:$COMMI_HASH
 
       # Deploy to DigitalOcean Kubernetes
       - name: Set up kubectl
@@ -114,7 +117,7 @@ jobs:
         env:
           COMMIT_HASH: ${{ github.sha }}
         run: |
-          kubectl set image deployment/website fastapicicdexample=${IMAGE_NAME_LOWER}:${COMMIT_HASH} -n fastapi-test
+          kubectl set image deployment/website fastapicicdexample=$IMAGE_NAME_LOWER:$COMMIT_HASH -n fastapi-test
 #          if kubectl get deployment website -n fastapi-test > /dev/null 2>&1; then
 #          echo "Deleting existing deployment..."
 #          kubectl delete deployment website -n fastapi-test
