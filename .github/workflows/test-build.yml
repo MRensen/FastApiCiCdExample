@@ -114,6 +114,7 @@ jobs:
         env:
           COMMIT_HASH: ${{ github.sha }}
         run: |
+          kubectl set image deployment/website website=${IMAGE_NAME_LOWER}:latest:${COMMIT_HASH} -n fastapi-test
 #          if kubectl get deployment website -n fastapi-test > /dev/null 2>&1; then
 #          echo "Deleting existing deployment..."
 #          kubectl delete deployment website -n fastapi-test
@@ -125,7 +126,6 @@ jobs:
 #          kubectl create deployment website \
 #          --image=${REGISTRY}/fast-api:${COMMIT_HASH} \
 #          -n fastapi-test
-          kubectl set image deployment/website website=${REGISTRY}/fast-api:${COMMIT_HASH} -n fastapi-test
 
 #      - name: expose
 #        run: kubectl expose deployment website --type=LoadBalancer --port=80 --target-port=80 --name=website -n fastapi-test
