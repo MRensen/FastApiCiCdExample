@@ -5,8 +5,7 @@ on:
     branches:
       - main
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
-#  REGISTRY: registry.digitalocean.com/novi-pipelines # PAs dit aan naar je eigen registry. Een registry registreer je op DO, net als een kubernetes cluster
+  REGISTRY: registry.digitalocean.com/novi-pipelines # PAs dit aan naar je eigen registry. Een registry registreer je op DO, net als een kubernetes cluster
 
 jobs:
   build:
@@ -58,47 +57,47 @@ jobs:
   # Docker build & push
   # -------------------------
 
-      - name: Create lowercase image name
-        run: |
-            IMAGE_NAME_LOWER=$(echo "${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')
-            echo "IMAGE_NAME_LOWER=$IMAGE_NAME_LOWER" >> $GITHUB_ENV
+#      - name: Create lowercase image name
+#        run: |
+#            IMAGE_NAME_LOWER=$(echo "${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')
+#            echo "IMAGE_NAME_LOWER=$IMAGE_NAME_LOWER" >> $GITHUB_ENV
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Log in to GitHub Container Registry
+#        uses: docker/login-action@v3
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        env:
-                  COMMIT_HASH: ${{ github.sha }}
-        run: |
-          docker build -t $IMAGE_NAME_LOWER:latest -t $IMAGE_NAME_LOWER:$COMMIT_HASH .
-
-#      # Build Docker Image with Git commit hash as tag for DO
 #      - name: Build Docker image
 #        env:
-#          COMMIT_HASH: ${{ github.sha }}
+#                  COMMIT_HASH: ${{ github.sha }}
 #        run: |
-#          docker build -t ${REGISTRY}/fast-api:${COMMIT_HASH} -t ${REGISTRY}/fast-api:latest .
+#          docker build -t $IMAGE_NAME_LOWER:latest -t $IMAGE_NAME_LOWER:$COMMIT_HASH .
+
+      # Build Docker Image with Git commit hash as tag for DO
+      - name: Build Docker image
+        env:
+          COMMIT_HASH: ${{ github.sha }}
+        run: |
+          docker build -t ${REGISTRY}/fast-api:${COMMIT_HASH} -t ${REGISTRY}/fast-api:latest .
 
 #      - name : Create DO registry
 #        run: doctl registry create <your-registry-name>
 
-#      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-#        run: doctl registry login --expiry-seconds 1200
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
 
-#      - name: Push image to DigitalOcean Container Registry
-#        run: docker push --all-tags ${REGISTRY}/fast-api
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push --all-tags ${REGISTRY}/fast-api
 
 
-      - name: Push Docker image
-        env:
-          COMMIT_HASH: ${{ github.sha }}
-        run: |
-          docker push $IMAGE_NAME_LOWER:latest
-          docker push $IMAGE_NAME_LOWER:$COMMIT_HASH
+#      - name: Push Docker image
+#        env:
+#          COMMIT_HASH: ${{ github.sha }}
+#        run: |
+#          docker push $IMAGE_NAME_LOWER:latest
+#          docker push $IMAGE_NAME_LOWER:$COMMIT_HASH
 
       # Deploy to DigitalOcean Kubernetes
       - name: Set up kubectl
