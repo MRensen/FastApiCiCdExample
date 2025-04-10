@@ -104,5 +104,5 @@ jobs:
       - name: Trigger redeploy on DigitalOcean App Platform
         run: |
             curl -X POST "https://api.digitalocean.com/v2/apps/${{ secrets.DO_APP_ID }}/deployments" \
-              -H "Authorization: Bearer ${{ secrets.DO_API_TOKEN }}" \
+              -H "Authorization: Bearer ${{ secrets.DO_TOKEN }}" \
               -H "Content-Type: application/json"
