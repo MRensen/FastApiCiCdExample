@@ -44,13 +44,13 @@ jobs:
 #        with:
 #         token: ${{ secrets.DO_TOKEN }}
 
-      # Log in to DigitalOcean Container Registry
-      - name: Log in to DigitalOcean
-        env:
-          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
-          DIGITALOCEAN_USERNAME: ${{ github.actor }}
-        run: |
-          echo "${DIGITALOCEAN_ACCESS_TOKEN}" | docker login registry.digitalocean.com -u "${DIGITALOCEAN_USERNAME}" --password-stdin
+#      # Log in to DigitalOcean Container Registry
+#      - name: Log in to DigitalOcean
+#        env:
+#          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_TOKEN }}
+#          DIGITALOCEAN_USERNAME: ${{ github.actor }}
+#        run: |
+#          echo "${DIGITALOCEAN_ACCESS_TOKEN}" | docker login registry.digitalocean.com -u "${DIGITALOCEAN_USERNAME}" --password-stdin
 
 
   # -------------------------
@@ -99,4 +99,4 @@ jobs:
         env:
           COMMIT_HASH: ${{ github.sha }}
         run: |
-          kubectl set image deployment/website fastapicicdexample=$IMAGE_NAME_LOWER:$COMMIT_HASH -n fastapi-test
+          kubectl set image deployment/belasting-deploy fastapicicdexample=$IMAGE_NAME_LOWER:$COMMIT_HASH -n bela-test
