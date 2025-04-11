@@ -5,7 +5,7 @@ on:
     branches:
       - main
 env:
-  REGISTRY: registry.digitalocean.com/novi-pipelines # PAs dit aan naar je eigen registry. Een registry registreer je op DO, net als een kubernetes cluster
+  REGISTRY: registry.digitalocean.com/novi-pipeline # PAs dit aan naar je eigen registry. Een registry registreer je op DO, net als een kubernetes cluster
 
 jobs:
   build:
